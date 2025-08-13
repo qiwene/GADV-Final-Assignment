@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerMouse : MonoBehaviour
 {
-        public Vector3 direction;
+    public Vector3 direction;
 
     void Update()
     {
