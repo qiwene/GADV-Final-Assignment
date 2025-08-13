@@ -10,14 +10,14 @@ public class PlayerForces : MonoBehaviour
     private Vector2 normalisedDirection;
     public float maxSpeed = 12.0f;
     private Rigidbody2D rb2d;
-    private PolygonCollider2D playerHitbox;
+    private CapsuleCollider2D playerHitbox;
     private PolygonCollider2D bottomHitbox;
     private PlayerMouse playerMouseScript;
 
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
-        playerHitbox = GetComponent<PolygonCollider2D>();
+        playerHitbox = GetComponent<CapsuleCollider2D>();
         bottomHitbox = transform.Find("Bottom hitbox").GetComponent<PolygonCollider2D>();
         playerMouseScript = GetComponent<PlayerMouse>();
 
