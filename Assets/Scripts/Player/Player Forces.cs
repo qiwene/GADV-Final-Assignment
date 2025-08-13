@@ -1,0 +1,63 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
+using UnityEngine;
+
+public class PlayerForces : MonoBehaviour
+{
+    public float pogoBounceForce = 12.0f;
+    private Vector3 direction3D;
+    private Vector2 normalisedDirection;
+    public float maxSpeed = 12.0f;
+    private Rigidbody2D rb2d;
+    private PolygonCollider2D playerHitbox;
+    private PolygonCollider2D bottomHitbox;
+    private PlayerMouse playerMouseScript;
+
+    void Start()
+    {
+        rb2d = GetComponent<Rigidbody2D>();
+        playerHitbox = GetComponent<PolygonCollider2D>();
+        bottomHitbox = transform.Find("Bottom hitbox").GetComponent<PolygonCollider2D>();
+        playerMouseScript = GetComponent<PlayerMouse>();
+
+        if (playerHitbox == null)
+        {
+            Debug.LogError("Player Hitbox Polygon Collider 2D not found!");
+        }
+        else
+        {
+            Debug.Log("Found hitbox: " + playerHitbox.name);
+        }
+
+        if (bottomHitbox == null)
+        {
+            Debug.LogError("Var bottomHitbox not found!");
+        }
+        else
+        {
+            Debug.Log("Found hitbox: " + bottomHitbox.name);
+        }
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        // Check if collided object has tag "Floor"
+        if (collision.gameObject.CompareTag("Floor"))
+        {
+            // Check if the collider involved in this collision is the bottomHitbox collider
+            Debug.Log("In contact with floor");
+            if (collision.otherCollider == bottomHitbox)
+            {
+                direction3D = playerMouseScript.direction;
+                Vector2 direction2D = new(direction3D.x, direction3D.y);
+                normalisedDirection = direction2D.normalized;
+                Debug.Log("Normalised Direction: " + normalisedDirection);
+                rb2d.AddForce((normalisedDirection * pogoBounceForce), ForceMode2D.Impulse);
+                Debug.Log("Force: " + normalisedDirection + pogoBounceForce);
+
+                rb2d.velocity = Vector2.ClampMagnitude(rb2d.velocity, maxSpeed);
+            }
+        }
+    }
+}
