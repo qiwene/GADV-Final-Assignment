@@ -93,9 +93,7 @@ public class PlayerMovement : MonoBehaviour
                 if (collision.otherCollider == bottomHitbox)
                 {
                     // Calculates the direction, normalises it and then makes it bounce while clamping the value
-                    Vector2 direction2D = new(direction3D.x, direction3D.y);
-                    normalisedDirection = direction2D.normalized;
-                    rb2d.AddForce((normalisedDirection * pogoBounceForce), ForceMode2D.Impulse);
+                    rb2d.AddForce((transform.up * pogoBounceForce), ForceMode2D.Impulse);
                     Debug.Log("Force: " + (normalisedDirection * pogoBounceForce));
 
                     rb2d.velocity = Vector2.ClampMagnitude(rb2d.velocity, maxSpeed);
@@ -108,9 +106,7 @@ public class PlayerMovement : MonoBehaviour
                 {
                     StartCoroutine(BounceEffect1());
                     // Calculates the direction, normalises it and then makes it bounce while clamping the value
-                    Vector2 direction2D = new(direction3D.x, direction3D.y);
-                    normalisedDirection = direction2D.normalized;
-                    rb2d.AddForce((normalisedDirection * pogoBounceForce), ForceMode2D.Impulse);
+                    rb2d.AddForce((transform.up * pogoBounceForce), ForceMode2D.Impulse);
                     Debug.Log("Force: " + (normalisedDirection * pogoBounceForce));
 
                     rb2d.velocity = Vector2.ClampMagnitude(rb2d.velocity, maxSpeed);
@@ -189,9 +185,7 @@ public class PlayerMovement : MonoBehaviour
         yield return StartCoroutine(BounceEffect2_PartA());
 
         // Physics bounce (after animation completes)
-        Vector2 direction2D = new(direction3D.x, direction3D.y);
-        normalisedDirection = direction2D.normalized;
-        rb2d.AddForce((normalisedDirection * pogoBounceForce), ForceMode2D.Impulse);
+        rb2d.AddForce((transform.up * pogoBounceForce), ForceMode2D.Impulse);
         rb2d.velocity = Vector2.ClampMagnitude(rb2d.velocity, maxSpeed);
         Debug.Log("Force: " + (normalisedDirection * pogoBounceForce));
 

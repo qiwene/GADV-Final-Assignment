@@ -7,14 +7,11 @@ public class CameraFollow : MonoBehaviour
     //Initialising of variables
     public string playerTag = "Player";
     private Transform player;
-    public Vector3 offset;
-    public float smoothSpeed = 0.125f;
     private bool cameraMessage = false;
 
     void Start()
     {
-        /*The code below is used to find the game object with the tag "Player" but if it
-         is unable to find the game object, it sends out a message which is used to debug.*/
+        // Find the player with tag and if fail, sends out a message
 
         GameObject playerObject = GameObject.FindGameObjectWithTag(playerTag);
         if (playerObject != null)
@@ -30,10 +27,11 @@ public class CameraFollow : MonoBehaviour
 
     void LateUpdate()
     {
+        // If player found, the cameras position is assigned to the player except x-axis
         if (player != null)
         {
             //
-            this.transform.position = new Vector3(player.position.x, player.position.y, this.transform.position.z);
+            this.transform.position = new Vector3(player.position.x, player.position.y, -10);
             if (cameraMessage == false)
             {
                 Debug.Log("Camera is functioning.");
