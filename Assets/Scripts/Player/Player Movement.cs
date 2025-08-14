@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static PlayerMovement;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -13,11 +15,19 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 normalisedDirection;
     public Vector3 originalScale;
     public Vector3 targetScale;
-    public float animDurationA = 0.2f;
-    public float animDurationB = 0.2f;
-    public bool bounceEffect;
+    public float animDurationA = 0.1f;
+    public float animDurationB = 0.1f;
     private bool rightClickChecker;
     private bool isBouncing = false;
+
+    // Bounce settings
+    public enum BounceEffects
+    {
+        None,
+        Effect1,
+        Effect2
+    }
+    public BounceEffects currentEffect;
 
     // Components
     private Rigidbody2D rb2d;
@@ -70,6 +80,54 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    //-----------------------Bounce Physics and mouse movement---------------------------------//
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Floor"))
+        {
+            if (currentEffect == BounceEffects.None)
+            {
+
+                Debug.Log("In contact with floor");
+                if (collision.otherCollider == bottomHitbox)
+                {
+                    // Calculates the direction, normalises it and then makes it bounce while clamping the value
+                    Vector2 direction2D = new(direction3D.x, direction3D.y);
+                    normalisedDirection = direction2D.normalized;
+                    rb2d.AddForce((normalisedDirection * pogoBounceForce), ForceMode2D.Impulse);
+                    Debug.Log("Force: " + (normalisedDirection * pogoBounceForce));
+
+                    rb2d.velocity = Vector2.ClampMagnitude(rb2d.velocity, maxSpeed);
+                }
+            }
+            else if (currentEffect == BounceEffects.Effect1)
+            {
+                Debug.Log("In contact with floor");
+                if (collision.otherCollider == bottomHitbox)
+                {
+                    StartCoroutine(BounceEffect1());
+                    // Calculates the direction, normalises it and then makes it bounce while clamping the value
+                    Vector2 direction2D = new(direction3D.x, direction3D.y);
+                    normalisedDirection = direction2D.normalized;
+                    rb2d.AddForce((normalisedDirection * pogoBounceForce), ForceMode2D.Impulse);
+                    Debug.Log("Force: " + (normalisedDirection * pogoBounceForce));
+
+                    rb2d.velocity = Vector2.ClampMagnitude(rb2d.velocity, maxSpeed);
+                }
+            }
+            else if (currentEffect == BounceEffects.Effect2)
+            {
+                if (isBouncing) return;
+                if (collision.gameObject.CompareTag("Floor") && collision.otherCollider == bottomHitbox)
+                {
+                    StartCoroutine(BounceEffect2Sequence());
+                }
+            }
+        }
+    }
+
+    // Old Bounce code
     /*
     void OnCollisionEnter2D(Collision2D collision)
     {
@@ -96,16 +154,35 @@ public class PlayerMovement : MonoBehaviour
         }
     }*/
 
-    void OnCollisionEnter2D(Collision2D collision)
+
+
+    //---------------------Bounce effects-----------------------//
+
+
+    // Bounce effect 1 method
+    private IEnumerator BounceEffect1()
     {
-        if (isBouncing) return;
-        if (collision.gameObject.CompareTag("Floor") && collision.otherCollider == bottomHitbox)
+        float t = 0;
+
+        // Animating from original scale to target scale
+        while (t < animDurationA)
         {
-            StartCoroutine(BounceSequence());
+            t += Time.deltaTime;
+            transform.localScale = Vector3.Lerp(originalScale, targetScale, t / animDurationA);
+            yield return null;
+        }
+        t = 0;
+        while (t < animDurationB)
+        {
+            t += Time.deltaTime;
+            transform.localScale = Vector3.Lerp(targetScale, originalScale, t / animDurationB);
+            yield return null;
         }
     }
 
-    private IEnumerator BounceSequence()
+
+    // Bounce effect 2 methods
+    private IEnumerator BounceEffect2Sequence()
     {
         isBouncing = true;
         // Part A: shrink animation
@@ -122,6 +199,7 @@ public class PlayerMovement : MonoBehaviour
         yield return StartCoroutine(BounceEffect2_PartB());
         isBouncing = false;
     }
+
 
     private IEnumerator BounceEffect2_PartA()
     {
