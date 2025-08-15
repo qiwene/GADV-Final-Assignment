@@ -37,8 +37,14 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
-        originalScale = transform.localScale;
+        if (originalScale == null)
+        {
+            originalScale = transform.localScale;
+        }
+        if (targetScale == null)
+        {
         targetScale = new Vector3(0.8f, 0.3f, transform.localScale.z);
+        }
 
         rb2d = GetComponent<Rigidbody2D>();
         playerHitbox = GetComponent<CapsuleCollider2D>();

@@ -23,7 +23,6 @@ public class Iconappear : MonoBehaviour
 
     void Update()
     {
-        Debug.Log("Player X: " + playerTransform.position.x);
         // Decide the target alpha based on player distance
         // x value where words appear
         if ((playerTransform.position.x >= xValue1) && (playerTransform.position.x <= xValue2))

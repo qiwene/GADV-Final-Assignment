@@ -13,6 +13,8 @@ public class PlaySound : MonoBehaviour
         bottomHitbox = transform.Find("Bottom hitbox").GetComponent<PolygonCollider2D>();
         audioSource = GetComponent<AudioSource>();
     }
+
+    // Plays an audio if the player collides with object with tag "Floor" and if within bottomHitbox
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Floor"))
